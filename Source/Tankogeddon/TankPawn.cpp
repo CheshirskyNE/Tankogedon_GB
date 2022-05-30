@@ -5,6 +5,10 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "TankController.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Components/ArrowComponent.h"
+#include "Cannon.h"
 
 
 
@@ -37,9 +41,43 @@ void ATankPawn::MoveForvard(float Value)
 	TargetForwardAxisValue = Value;
 }
 
-void ATankPawn::MoveRightVector(float Value)
+void ATankPawn::RotateRight(float Value)
 {
-	TargetRightAxisValue = Value;
+	TargetRotateAxisValue = Value;
+}
+
+
+void ATankPawn::BeginPlay()
+{
+	Super::BeginPlay();
+	Controller = Cast<ATankController>(GetController());
+
+	SetupCannon();
+}
+
+void ATankPawn::SetupCannon()
+{
+	if (Cannon)
+	{
+		Cannon->Destroy();
+	}
+	FActorSpawnParameters spawnParams;
+	spawnParams.Instigator = this;
+	spawnParams.Owner = this;
+
+	Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, spawnParams);
+	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+}
+
+void ATankPawn::Fire()
+{
+	Cannon->Fire();
+}
+
+void ATankPawn::FireSpecial()
+{
+	Cannon->FireSpecial();
 }
 
 void ATankPawn::Tick(float DeltaTime)
@@ -51,7 +89,22 @@ void ATankPawn::Tick(float DeltaTime)
 	FVector movePosition = ActorLocation + ForvardVector * MoveSpeed * TargetForwardAxisValue * DeltaTime;
 	SetActorLocation(movePosition, true);
 
-	FVector ActorRightVector = GetActorRightVector();
-	FVector movePosition = ActorLocation + ActorRightVector * RotationSpeed * TargetRightAxisValue * DeltaTime;
-	SetActorLocation(movePosition, true);
+	float CurrentRotateAxisValue = FMath::Lerp(CurrentRotateAxisValue, TargetRotateAxisValue, RotateInterpolationKey);
+	float YawRotation = CurrentRotateAxisValue * RotationSpeed * DeltaTime;
+	FRotator ActionRotation = GetActorRotation();
+	YawRotation = ActionRotation.Yaw + YawRotation;
+	FRotator NewRotation = FRotator(0, YawRotation, 0);
+	SetActorRotation(NewRotation);
+
+	if (Controller)
+	{
+		FVector mousePosition = Controller -> GetMousePosition();
+		FRotator currRotation = TurretMesh->GetComponentRotation();
+		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), mousePosition);
+		targetRotation.Pitch = currRotation.Pitch;
+		targetRotation.Roll = currRotation.Roll;
+
+		TurretMesh->SetWorldRotation(FMath::Lerp (currRotation, targetRotation, TurretRotateInterpolationKey));
+	}	
 }
+

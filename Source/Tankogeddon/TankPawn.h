@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Cannon.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "TankPawn.generated.h"
@@ -9,6 +10,9 @@
 class UStaticMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class ATankController;
+class ACannon;
+
 
 UCLASS()
 
@@ -19,31 +23,60 @@ class TANKOGEDDON_API ATankPawn : public APawn
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* BodyMesh;
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* TurretMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USpringArmComponent * SpringArm;
+	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 	float MoveSpeed = 100;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
 	float RotationSpeed = 100;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
+	float RotateInterpolationKey = 0.1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
+	float TurretRotateInterpolationKey = 0.1;
 
 	float TargetForwardAxisValue = 0;
 
 	float TargetRightAxisValue = 0;
 
+	float TargetRotateAxisValue = 0;
+
+	ATankController * Controller;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UArrowComponent* CannonSetupPoint;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Cannon")
+		TSubclassOf<ACannon> CannonClass;
+	UPROPERTY()
+		ACannon* Cannon;
+
+	void SetupCannon();
 
 public:	
 	ATankPawn();
 
 	void MoveForvard(float Value);
 
-	void MoveRightVector(float Value);
+	void RotateRight(float Value);
 
 	void Tick (float DeltaTime) override;
+
+	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+		void Fire();
+
+	UFUNCTION()
+		void FireSpecial();
 };
 
