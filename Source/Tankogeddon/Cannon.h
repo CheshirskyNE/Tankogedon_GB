@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameStructs.h"
 #include "GameFramework/Actor.h"
+#include "Projectile.h"
 #include "Cannon.generated.h"
+
 
 
 UCLASS()
@@ -25,23 +27,27 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Components")
-		class UStaticMeshComponent*CannonMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		class UStaticMeshComponent* CannonMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Components")
-		class UArrowComponent*ProjectTileSpawnPoint;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		class UArrowComponent* ProjectileSpawnPoint;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Fire | Components")
-		float FireRate = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire | Components")
+		float FireRate = 1.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Fire | Components")
-		float FireRange = 1000;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire | Components")
+		float FireRange = 1000.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Fire | Components")
-		float FireDamage = 1000;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire | Components")
+		float FireDamage = 1.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Fire | Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire | Components")
 		ECannonType CannonType = ECannonType::FireProjectile;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire | Components")
+		TSubclassOf<class AProjectile>AProjectileClass;
+
 
 	bool bReadyToFire = true;
 };

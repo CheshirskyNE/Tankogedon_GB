@@ -34,22 +34,22 @@ protected:
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
-	float MoveSpeed = 100;
+	float MoveSpeed = 100.0f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
-	float RotationSpeed = 100;
+	float RotationSpeed = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
-	float RotateInterpolationKey = 0.1;
+	float RotateInterpolationKey = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Rotation")
-	float TurretRotateInterpolationKey = 0.1;
+	float TurretRotateInterpolationKey = 0.1f;
 
-	float TargetForwardAxisValue = 0;
+	float TargetForwardAxisValue = 0.0f;
 
-	float TargetRightAxisValue = 0;
+	float TargetRightAxisValue = 0.0f;
 
-	float TargetRotateAxisValue = 0;
+	float TargetRotateAxisValue = 0.0f;
 
 	ATankController * Controller;
 
